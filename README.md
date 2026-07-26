@@ -27,7 +27,17 @@ sudo nixos-rebuild switch --flake .#nixos
   `system.stateVersion` などトップレベル設定。各モジュールを import する。
 - `nixos/modules/shell-tools.nix` — git, ripgrep, fd, bat, eza など汎用 CLI ツール。
 - `nixos/modules/fish.nix` — fish 本体・fzf/fzf-fish・zoxide・tide のシェル統合設定。
+- `nixos/modules/git.nix` — `/etc/gitconfig` の宣言的設定(user, core, init など)。
+- `nixos/modules/ssh.nix` — Windows 側 1Password の SSH エージェントを WSL に橋渡しする
+  `SSH_AUTH_SOCK` 設定。RSA 鍵の実体は 1Password が管理する。
 - `nixos/modules/vscode-server.nix` — Remote-WSL 用の `services.vscode-server` 設定。
+
+## 1Password SSH エージェント連携
+
+1. Windows 側の 1Password アプリで Settings → Developer → "Use the SSH agent" を有効化し、
+   WSL integration を ON にする(`~/.1password/agent.sock` が各 WSL ディストロに公開される)。
+2. `nixos-rebuild switch` 後、新しいシェルで `echo $SSH_AUTH_SOCK` がそのパスを指していることを確認する。
+3. `ssh-add -l` で 1Password 管理下の鍵が見えれば OK。
 
 ## 新しい NixOS-WSL 環境に持っていく場合
 

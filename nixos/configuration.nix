@@ -4,6 +4,8 @@
   imports = [
     ./modules/shell-tools.nix
     ./modules/fish.nix
+    ./modules/git.nix
+    ./modules/ssh.nix
     ./modules/vscode-server.nix
   ];
 
