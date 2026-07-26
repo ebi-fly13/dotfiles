@@ -34,6 +34,10 @@ sudo nixos-rebuild switch --flake .#nixos
   管理し、`ssh.exe` が Windows 側の 1Password SSH エージェント(named pipe)を直接使うため、
   WSL 側でソケットを橋渡しする設定は不要。
 - `nixos/modules/vscode-server.nix` — Remote-WSL 用の `services.vscode-server` 設定。
+- `nixos/modules/wezterm.nix` — WezTerm (Windows 側) から接続した際に渡ってくる
+  `TERM=wezterm` をシェル側で認識できるよう、`pkgs.wezterm.terminfo` を導入する。
+- `wezterm/wezterm.lua` — WezTerm (Windows 側) の設定。Windows のファイルなので
+  Nix のビルド対象外。下記「WezTerm の設定」を参照。
 
 ## 1Password SSH エージェント連携
 
@@ -41,6 +45,24 @@ sudo nixos-rebuild switch --flake .#nixos
 2. `nixos-rebuild switch` 後、新しいシェルで `ssh.exe -T git@github.com` 等が
    1Password 管理下の鍵で認証できることを確認する(git 操作は `core.sshCommand` 経由で
    自動的に `ssh.exe` を使う)。
+
+## WezTerm の設定
+
+WezTerm は Windows 側で動かし、`wsl_domains` 経由でこの NixOS-WSL ディストロに
+接続する構成。設定ファイル `wezterm/wezterm.lua` は Windows のファイルシステム
+(`%USERPROFILE%\.wezterm.lua`)に置く必要があるため、Nix では管理できない。
+このリポジトリではファイル自体だけを git 管理し、Windows 側からシンボリック
+リンクで読み込ませる。
+
+PowerShell (開発者モード有効、または管理者権限で実行):
+
+```powershell
+New-Item -ItemType SymbolicLink -Path $env:USERPROFILE\.wezterm.lua `
+  -Target \\wsl$\NixOS\home\ebi\dotfiles\wezterm\wezterm.lua
+```
+
+`wsl -l -v` で表示される distro 名が `NixOS` と異なる場合は、上記コマンドの
+パスと `wezterm/wezterm.lua` 内の `distro` 変数を実際の名前に合わせて書き換える。
 
 ## 新しい NixOS-WSL 環境に持っていく場合
 

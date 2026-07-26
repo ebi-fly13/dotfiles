@@ -7,6 +7,7 @@
     ./modules/git.nix
     ./modules/ssh.nix
     ./modules/vscode-server.nix
+    ./modules/wezterm.nix
   ];
 
   wsl.enable = true;
