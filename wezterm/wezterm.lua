@@ -64,6 +64,27 @@ config.keys = {
 			domain = { DomainName = "local" },
 		},
 	},
+	-- WezTerm の既定では Ctrl+C はコピーではなく SIGINT、Ctrl+V は
+	-- 未割り当て(コピペは本来 Ctrl+Shift+C/V)。Windows のアプリに
+	-- 合わせて、選択中のみ Ctrl+C をコピーにし、それ以外は通常通り
+	-- SIGINT を送る。Ctrl+V は常にペーストにする。
+	{
+		key = "c",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			local selection = window:get_selection_text_for_pane(pane)
+			if selection and #selection > 0 then
+				window:perform_action(wezterm.action.CopyTo("Clipboard"), pane)
+			else
+				window:perform_action(wezterm.action.SendKey { key = "c", mods = "CTRL" }, pane)
+			end
+		end),
+	},
+	{
+		key = "v",
+		mods = "CTRL",
+		action = wezterm.action.PasteFrom("Clipboard"),
+	},
 }
 
 -- ウィンドウタイトルバーに、実行中シェルのOS名(distro名)を表示する。
