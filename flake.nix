@@ -1,29 +1,21 @@
 {
-  description = "dotfiles (WSL Ubuntu + fish + home-manager)";
+  description = "dotfiles (NixOS-WSL + fish)";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
-    let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-      username = "ebi";
-    in
+  outputs = { self, nixpkgs, nixos-wsl, ... }:
     {
-      homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
         modules = [
-          ./home.nix
-          { home.username = username; home.homeDirectory = "/home/${username}"; }
+          nixos-wsl.nixosModules.default
+          ./nixos/configuration.nix
         ];
       };
     };
