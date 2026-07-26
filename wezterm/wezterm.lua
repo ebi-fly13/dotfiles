@@ -54,6 +54,16 @@ config.keys = {
 		mods = "CTRL|SHIFT",
 		action = wezterm.action.ReloadConfiguration,
 	},
+	-- Windows 側の PowerShell を新規タブで開く。domain を明示しないと
+	-- default_domain (WSL) 側で起動しようとしてしまう。
+	{
+		key = "w",
+		mods = "CTRL|SHIFT",
+		action = wezterm.action.SpawnCommandInNewTab {
+			args = { "powershell.exe" },
+			domain = { DomainName = "local" },
+		},
+	},
 }
 
 -- ウィンドウタイトルバーに、実行中シェルのOS名(distro名)を表示する。
