@@ -20,5 +20,8 @@
           ./nixos/configuration.nix
         ];
       };
+
+      packages.x86_64-linux.default =
+        self.nixosConfigurations.nixos.config.system.build.toplevel;
     };
 }
