@@ -34,6 +34,9 @@ sudo nixos-rebuild switch --flake .#nixos
   管理し、`ssh.exe` が Windows 側の 1Password SSH エージェント(named pipe)を直接使うため、
   WSL 側でソケットを橋渡しする設定は不要。
 - `nixos/modules/vscode-server.nix` — Remote-WSL 用の `services.vscode-server` 設定。
+- `nixos/modules/windows-interop.nix` — Windows 側の `powershell.exe` /
+  `pwsh.exe` / `cmd.exe` を WSL から呼ぶ fish 関数(`powershell`, `pwsh`, `cmd`)。
+  引数の WSL パスは自動で Windows パスに変換される。
 - `nixos/modules/wezterm.nix` — WezTerm (Windows 側) から接続した際に渡ってくる
   `TERM=wezterm` をシェル側で認識できるよう、`pkgs.wezterm.terminfo` を導入する。
 - `wezterm/wezterm.lua` — WezTerm (Windows 側) の設定。Windows のファイルなので

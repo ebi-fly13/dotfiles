@@ -8,6 +8,7 @@
     ./modules/ssh.nix
     ./modules/vscode-server.nix
     ./modules/wezterm.nix
+    ./modules/windows-interop.nix
   ];
 
   wsl.enable = true;
