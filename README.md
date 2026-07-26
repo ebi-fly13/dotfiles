@@ -28,16 +28,19 @@ sudo nixos-rebuild switch --flake .#nixos
 - `nixos/modules/shell-tools.nix` — git, ripgrep, fd, bat, eza など汎用 CLI ツール。
 - `nixos/modules/fish.nix` — fish 本体・fzf/fzf-fish・zoxide・tide のシェル統合設定。
 - `nixos/modules/git.nix` — `/etc/gitconfig` の宣言的設定(user, core, init など)。
-- `nixos/modules/ssh.nix` — Windows 側 1Password の SSH エージェントを WSL に橋渡しする
-  `SSH_AUTH_SOCK` 設定。RSA 鍵の実体は 1Password が管理する。
+  `core.sshCommand` で Windows 側 `ssh.exe` を使う。
+- `nixos/modules/ssh.nix` — シェルの `ssh` コマンドを Windows 側 `ssh.exe`
+  (`/mnt/c/Windows/System32/OpenSSH/ssh.exe`) に alias する。RSA 鍵は 1Password が
+  管理し、`ssh.exe` が Windows 側の 1Password SSH エージェント(named pipe)を直接使うため、
+  WSL 側でソケットを橋渡しする設定は不要。
 - `nixos/modules/vscode-server.nix` — Remote-WSL 用の `services.vscode-server` 設定。
 
 ## 1Password SSH エージェント連携
 
-1. Windows 側の 1Password アプリで Settings → Developer → "Use the SSH agent" を有効化し、
-   WSL integration を ON にする(`~/.1password/agent.sock` が各 WSL ディストロに公開される)。
-2. `nixos-rebuild switch` 後、新しいシェルで `echo $SSH_AUTH_SOCK` がそのパスを指していることを確認する。
-3. `ssh-add -l` で 1Password 管理下の鍵が見えれば OK。
+1. Windows 側の 1Password アプリで Settings → Developer → "Use the SSH agent" を有効化する。
+2. `nixos-rebuild switch` 後、新しいシェルで `ssh.exe -T git@github.com` 等が
+   1Password 管理下の鍵で認証できることを確認する(git 操作は `core.sshCommand` 経由で
+   自動的に `ssh.exe` を使う)。
 
 ## 新しい NixOS-WSL 環境に持っていく場合
 
