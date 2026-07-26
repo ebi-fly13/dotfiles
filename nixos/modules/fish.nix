@@ -13,6 +13,11 @@
     interactiveShellInit = ''
       set -g fish_greeting
 
+      # fzf-fish は既定で Ctrl+V を「変数検索」ウィジェットに割り当てており、
+      # 通常のペースト操作(Ctrl+V)と衝突してペーストできなくなるため、
+      # 変数検索だけ Ctrl+Alt+V に付け替える。
+      fzf_configure_bindings --variables=ctrl-alt-v
+
       # tide renders its two-line prompt in a background `fish -c`
       # subprocess that skips normal interactive init, so a merely
       # global $fish_key_bindings never reaches it there and tide's
