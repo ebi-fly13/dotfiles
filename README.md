@@ -25,7 +25,7 @@ sudo nixos-rebuild switch --flake .#nixos
 - `flake.nix` — `nixos-wsl`・`nixpkgs`・`vscode-server` の input。`nixosConfigurations.nixos` を出力。
 - `nixos/configuration.nix` — WSL 有効化・ユーザー(`ebi`, shell = fish)・
   `system.stateVersion` などトップレベル設定。各モジュールを import する。
-- `nixos/modules/shell-tools.nix` — git, ripgrep, fd, bat, eza など汎用 CLI ツール。
+- `nixos/modules/shell-tools.nix` — git, ripgrep, fd, bat, eza, claude-code など汎用 CLI ツール。
 - `nixos/modules/fish.nix` — fish 本体・fzf/fzf-fish・zoxide・tide のシェル統合設定。
 - `nixos/modules/git.nix` — `/etc/gitconfig` の宣言的設定(user, core, init など)。
   `core.sshCommand` で Windows 側 `ssh.exe` を使う。
