@@ -38,6 +38,8 @@ sudo nixos-rebuild switch --flake .#nixos
   `TERM=wezterm` をシェル側で認識できるよう、`pkgs.wezterm.terminfo` を導入する。
 - `wezterm/wezterm.lua` — WezTerm (Windows 側) の設定。Windows のファイルなので
   Nix のビルド対象外。下記「WezTerm の設定」を参照。
+- `autohotkey/wezterm-toggle.ahk` — WezTerm を前面に呼び出す/背面に隠す AutoHotkey
+  スクリプト(Windows 側)。Nix のビルド対象外。下記「AutoHotkey の設定」を参照。
 
 ## 1Password SSH エージェント連携
 
@@ -63,6 +65,30 @@ New-Item -ItemType SymbolicLink -Path $env:USERPROFILE\.wezterm.lua `
 
 `wsl -l -v` で表示される distro 名が `NixOS` と異なる場合は、上記コマンドの
 パスと `wezterm/wezterm.lua` 内の `distro` 変数を実際の名前に合わせて書き換える。
+
+## AutoHotkey の設定
+
+WezTerm には Windows Terminal の Quake モードのような表示/非表示トグル機能が
+無く、`wezterm.lua` 側のキーバインドは WezTerm がフォーカスされている時しか
+効かない(隠れている状態からは呼び出せない)。そのため Windows 側で
+AutoHotkey v2 を使い、`autohotkey/wezterm-toggle.ahk` でフォーカス状態に
+関係なく常に有効なグローバルホットキーを提供する。
+
+- `Ctrl+Alt+Up` … WezTerm を前面に呼び出す(最小化していれば復元)
+- `Ctrl+Alt+Down` … WezTerm を最小化して背面に隠す
+
+セットアップ:
+
+1. Windows に [AutoHotkey v2](https://www.autohotkey.com/) をインストールする。
+2. `autohotkey/wezterm-toggle.ahk` をダブルクリックして実行するか、
+   ログイン時に自動起動させたい場合はスタートアップフォルダにショートカット
+   (または PowerShell でシンボリックリンク)を作成する。
+
+```powershell
+New-Item -ItemType SymbolicLink `
+  -Path "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\wezterm-toggle.ahk" `
+  -Target \\wsl$\NixOS\home\ebi\dotfiles\autohotkey\wezterm-toggle.ahk
+```
 
 ## 新しい NixOS-WSL 環境に持っていく場合
 
