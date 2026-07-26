@@ -18,6 +18,7 @@
     bat
     eza
     fzf
+    fishPlugins.fzf-fish
   ];
 
   programs.fish = {
@@ -31,6 +32,12 @@
   programs.zoxide = {
     enable = true;
     enableFishIntegration = true;
+  };
+
+  services.vscode-server = {
+    enable = true;
+    enableFHS = true;
+    nodejsPackage = pkgs.nodejs_22;
   };
 
   system.stateVersion = "26.05";
