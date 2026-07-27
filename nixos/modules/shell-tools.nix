@@ -11,6 +11,7 @@
     bat
     eza
     claude-code
+    lazygit
     gcc
     gnumake
     clang
