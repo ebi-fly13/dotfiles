@@ -11,5 +11,10 @@
     bat
     eza
     claude-code
+    gcc
+    gnumake
+    clang
+    rustc
+    cargo
   ];
 }
