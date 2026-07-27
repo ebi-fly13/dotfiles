@@ -14,6 +14,8 @@
   wsl.enable = true;
   wsl.defaultUser = "ebi";
 
+  time.timeZone = "Asia/Tokyo";
+
   users.users.ebi = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
