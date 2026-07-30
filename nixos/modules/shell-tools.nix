@@ -18,5 +18,6 @@
     rustup
     wget
     qemu
+    cargo-bootimage
   ];
 }
