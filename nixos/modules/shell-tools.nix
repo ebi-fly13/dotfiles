@@ -15,8 +15,7 @@
     gcc
     gnumake
     clang
-    rustc
-    cargo
+    rustup
     wget
   ];
 }
