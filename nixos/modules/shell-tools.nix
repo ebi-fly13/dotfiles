@@ -17,5 +17,6 @@
     clang
     rustc
     cargo
+    wget
   ];
 }
