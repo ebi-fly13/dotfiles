@@ -17,5 +17,6 @@
     clang
     rustup
     wget
+    qemu
   ];
 }
