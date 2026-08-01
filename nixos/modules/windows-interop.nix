@@ -47,5 +47,18 @@ in
         command git $argv
       end
     end
+
+    # code コマンドは WSL 内から呼ぶと常に Remote-WSL 拡張機能経由で開こうとするため、
+    # /mnt 配下の Windows 側ファイルを開くときはネイティブの Code.exe を直接起動する。
+    function code --description 'Use native Windows Code.exe under /mnt, otherwise the WSL code'
+      if string match -q '/mnt/*' -- $PWD
+        set -l wsl_code (command -s code)
+        set -l vscode_dir (dirname (dirname (realpath $wsl_code)))
+        "$vscode_dir/Code.exe" (__win_args $argv) &
+        disown
+      else
+        command code $argv
+      end
+    end
   '';
 }
