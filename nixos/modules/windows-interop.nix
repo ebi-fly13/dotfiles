@@ -47,15 +47,5 @@ in
         command git $argv
       end
     end
-
-    function fish_command_not_found --description 'Retry unknown commands as Windows argv[1].exe'
-      set -l win_cmd "$argv[1].exe"
-      if command -sq $win_cmd
-        $win_cmd (__win_args $argv[2..-1])
-        return $status
-      end
-      printf 'fish: Unknown command: %s\n' $argv[1] >&2
-      return 127
-    end
   '';
 }
