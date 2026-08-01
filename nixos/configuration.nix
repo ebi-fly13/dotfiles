@@ -23,6 +23,10 @@
   };
 
   security.sudo.wheelNeedsPassword = false;
+  # sudo 経由でも呼び出し元シェルの proxy 環境変数を引き継ぐ。
+  security.sudo.extraConfig = ''
+    Defaults env_keep += "http_proxy https_proxy ftp_proxy no_proxy HTTP_PROXY HTTPS_PROXY FTP_PROXY NO_PROXY"
+  '';
 
   system.stateVersion = "26.05";
 }
