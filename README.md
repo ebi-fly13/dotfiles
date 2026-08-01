@@ -8,23 +8,36 @@ home-manager は使わず、すべて `nixos/configuration.nix` の system レ�
 
 ## 前提
 
-- このリポジトリは NixOS-WSL ディストロ内の `/home/ebi/dotfiles` に置いて使う。
-- `nixosConfigurations.nixos` の `wsl.defaultUser` は `ebi`。
+- このリポジトリは NixOS-WSL ディストロ内の `/home/<username>/dotfiles` に置いて使う。
+- flake は `nixosConfigurations` を2つ出力する。
+  - `nixos` — 通常ビルド。ユーザー名は `ebi`。
+  - `personal` — 個人ビルド。ユーザー名は `nixos`。個人用の設定
+    (`fish/env.fish`、nix コードは置かない)は別の private repo
+    (`dotfiles-private`)で管理し、`nixos-rebuild switch
+    --flake .#personal` の評価時だけ取得される。読み込みロジック自体は
+    このリポジトリの `nixos/modules/personal.nix` にある。`#nixos` の
+    ビルドには private repo へのアクセス権は不要。
 
 ## 設定を反映する
 
 ```fish
 cd ~/dotfiles
-sudo nixos-rebuild switch --flake .#nixos
+sudo nixos-rebuild switch --flake .#nixos      # 通常ビルド(ebi)
+sudo nixos-rebuild switch --flake .#personal   # 個人ビルド
 ```
 
 `nixos/configuration.nix` を編集してから上記を実行すれば変更が反映される。
 
 ## 構成
 
-- `flake.nix` — `nixos-wsl`・`nixpkgs`・`vscode-server` の input。`nixosConfigurations.nixos` を出力。
-- `nixos/configuration.nix` — WSL 有効化・ユーザー(`ebi`, shell = fish)・
+- `flake.nix` — `nixos-wsl`・`nixpkgs`・`vscode-server` の input。
+  `username` と `personalConfigPath`(personal ビルドの時だけ private repo
+  を `builtins.fetchGit` で遅延取得したパス)を `specialArgs` 経由で渡し、
+  `nixosConfigurations.nixos` / `nixosConfigurations.personal` を出力する。
+- `nixos/configuration.nix` — WSL 有効化・ユーザー(shell = fish)・
   `system.stateVersion` などトップレベル設定。各モジュールを import する。
+- `nixos/modules/personal.nix` — `personalConfigPath` が設定されている時
+  だけ、private repo 内の `fish/env.fish` を fish 起動時に `source` する。
 - `nixos/modules/shell-tools.nix` — git, ripgrep, fd, bat, eza, claude-code など汎用 CLI ツール。
 - `nixos/modules/fish.nix` — fish 本体・fzf/fzf-fish・zoxide・tide のシェル統合設定。
 - `nixos/modules/git.nix` — `/etc/gitconfig` の宣言的設定(user, core, init など)。

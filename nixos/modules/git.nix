@@ -1,4 +1,4 @@
-{ ... }:
+{ username, ... }:
 
 {
   environment.etc."gitconfig".text = ''
@@ -9,7 +9,7 @@
     	editor = code
     [core]
     	editor = code
-    	excludesfile = /home/ebi/.gitignore_global
+    	excludesfile = /home/${username}/.gitignore_global
     	sshCommand = /mnt/c/Windows/System32/OpenSSH/ssh.exe
     [init]
     	defaultBranch = main

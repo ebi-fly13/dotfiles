@@ -1,10 +1,11 @@
-{ config, pkgs, ... }:
+{ config, pkgs, username, ... }:
 
 {
   imports = [
     ./modules/shell-tools.nix
     ./modules/fish.nix
     ./modules/git.nix
+    ./modules/personal.nix
     ./modules/ssh.nix
     ./modules/vscode-server.nix
     ./modules/wezterm.nix
@@ -12,11 +13,11 @@
   ];
 
   wsl.enable = true;
-  wsl.defaultUser = "ebi";
+  wsl.defaultUser = username;
 
   time.timeZone = "Asia/Tokyo";
 
-  users.users.ebi = {
+  users.users.${username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     shell = pkgs.fish;
