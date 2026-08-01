@@ -28,6 +28,22 @@ sudo nixos-rebuild switch --flake .#personal   # 個人ビルド
 
 `nixos/configuration.nix` を編集してから上記を実行すれば変更が反映される。
 
+### `#personal` を sudo で直接 switch できない場合
+
+`sudo nixos-rebuild switch --flake .#personal` は root 権限で private repo
+(`dotfiles-private`)を `fetchGit` しようとするが、この環境では
+`/mnt/c/Windows/System32/OpenSSH/ssh.exe: Invalid argument` で失敗することが
+ある。一般ユーザー権限では同じ fetch が問題なく成功するため、root からの
+ssh.exe 呼び出し(WSL interop)が絡む何らかの環境差異が原因と見られるが、
+根本原因は未特定。
+
+回避策として、build は sudo なし(一般ユーザー)で行い、activate だけ sudo で行う:
+
+```fish
+nixos-rebuild build --flake .#personal
+sudo ./result/bin/switch-to-configuration switch
+```
+
 ## 構成
 
 - `flake.nix` — `nixos-wsl`・`nixpkgs`・`vscode-server` の input。
