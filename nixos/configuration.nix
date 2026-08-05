@@ -14,6 +14,9 @@
 
   wsl.enable = true;
   wsl.defaultUser = username;
+  # Windows の PATH を WSL の $PATH に混ぜない(op/git/powershell 等は
+  # windows-interop.nix の wslwrap 経由で明示的に解決するため不要)。
+  wsl.interop.includePath = false;
 
   time.timeZone = "Asia/Tokyo";
 
