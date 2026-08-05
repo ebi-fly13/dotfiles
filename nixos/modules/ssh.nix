@@ -1,10 +1,11 @@
 { ... }:
 
 {
-  # RSA/SSH keys are managed by 1Password on the Windows host. Rather than
-  # bridging its agent socket into WSL, shell out to Windows' own ssh.exe,
-  # which talks to 1Password's Windows SSH agent (named pipe) directly.
-  programs.fish.shellAliases = {
-    ssh = "/mnt/c/Windows/System32/OpenSSH/ssh.exe";
-  };
+  # RSA/SSH keys are managed by 1Password on the Windows host, so ssh/ssh-add
+  # must resolve to the Windows binaries. link (not register) so non-fish
+  # processes can exec them via $PATH too.
+  programs.fish.shellInit = ''
+    wslwrap link ssh
+    wslwrap link ssh-add
+  '';
 }

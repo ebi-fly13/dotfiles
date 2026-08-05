@@ -51,6 +51,11 @@ in
     # 必要なため link ではなく register(auto モード)を使う。
     wslwrap register git
 
+    # register は fish 関数なので fish 経由の呼び出ししか解決できない。
+    # 非 fish プロセスからも exec できるよう link で $PATH に実体を置く。
+    wslwrap link cmd
+    wslwrap link powershell
+
     # code コマンドは WSL 内から呼ぶと常に Remote-WSL 拡張機能経由で開こうとするため、
     # /mnt 配下の Windows 側ファイルを開くときはネイティブの Code.exe を直接起動する。
     function code --description 'Use native Windows Code.exe under /mnt, otherwise the WSL code'
