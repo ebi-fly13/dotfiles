@@ -39,8 +39,8 @@ sudo ./result/bin/switch-to-configuration switch
 
 ## 構成
 
-- `flake.nix` — `nixos-wsl`・`nixpkgs`・`vscode-server` の input。
-  `username` と `personalConfigPath` を `specialArgs` 経由で渡し、
+- `flake.nix` — `nixos-wsl`・`nixpkgs`・`vscode-server`・`wslwrap-fish` の
+  input。`username` と `personalConfigPath` を `specialArgs` 経由で渡し、
   `nixosConfigurations.nixos` / `.personal` を出力する。
 - `nixos/configuration.nix` — WSL 有効化・ユーザー(shell = fish)・
   `system.stateVersion` などのトップレベル設定。各モジュールを import する。
@@ -56,9 +56,12 @@ sudo ./result/bin/switch-to-configuration switch
   の SSH エージェント(named pipe)を `ssh.exe` が直接使うため、WSL 側での
   ソケット橋渡しは不要。
 - `nixos/modules/vscode-server.nix` — Remote-WSL 用の `services.vscode-server`。
-- `nixos/modules/windows-interop.nix` — `powershell.exe` / `pwsh.exe` /
-  `cmd.exe` を WSL から呼ぶ fish 関数。引数の WSL パスは自動で Windows
-  パスに変換される。
+- `nixos/modules/windows-interop.nix` —
+  [wslwrap.fish](https://github.com/drop-stones/wslwrap.fish) で
+  `op` / `powershell` / `pwsh` / `cmd` を常に Windows 版 exe 実行に、`git` は
+  `/mnt` 配下で Windows 版、それ以外で Linux 版に自動選択する。`which` も
+  `wslwrap which` に alias してラッパーを解決できるようにする。`code` は
+  Remote-WSL を避けてネイティブ `Code.exe` を直接起動する専用の fish 関数。
 - `nixos/modules/wezterm.nix` — WezTerm 接続時に渡ってくる `TERM=wezterm`
   を認識できるよう `pkgs.wezterm.terminfo` を導入する。
 - `wezterm/wezterm.lua` — WezTerm (Windows 側) の設定。Windows のファイル

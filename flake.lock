@@ -90,7 +90,8 @@
       "inputs": {
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
-        "vscode-server": "vscode-server"
+        "vscode-server": "vscode-server",
+        "wslwrap-fish": "wslwrap-fish"
       }
     },
     "vscode-server": {
@@ -108,6 +109,22 @@
       "original": {
         "owner": "nix-community",
         "repo": "nixos-vscode-server",
+        "type": "github"
+      }
+    },
+    "wslwrap-fish": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780065533,
+        "narHash": "sha256-K4vKbRW02CtR4Tr6bd6i4j/HrjP0UzzDk8GvmPBVXO8=",
+        "owner": "drop-stones",
+        "repo": "wslwrap.fish",
+        "rev": "0e8065352d34f350af2261409b790afcb94ad11a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "drop-stones",
+        "repo": "wslwrap.fish",
         "type": "github"
       }
     }

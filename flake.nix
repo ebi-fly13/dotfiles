@@ -8,9 +8,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vscode-server.url = "github:nix-community/nixos-vscode-server";
+    wslwrap-fish = {
+      url = "github:drop-stones/wslwrap.fish";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, vscode-server, ... }:
+  outputs = { self, nixpkgs, nixos-wsl, vscode-server, wslwrap-fish, ... }:
     let
       # 個人用の設定(fish ファイルなど、nix コードではなくただのファイル)
       # は別の private repo で管理し、personal
@@ -32,7 +36,7 @@
 
       mkNixosConfiguration = { username, personalConfigPath ? null }: nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit username personalConfigPath; };
+        specialArgs = { inherit username personalConfigPath wslwrap-fish; };
         modules = [
           nixos-wsl.nixosModules.default
           vscode-server.nixosModules.default

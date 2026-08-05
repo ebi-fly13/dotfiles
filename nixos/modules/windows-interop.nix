@@ -1,19 +1,31 @@
-{ lib, ... }:
+{ lib, pkgs, wslwrap-fish, ... }:
 
 let
-  winExeCommands = [
-    "op" # 1Password CLI
-  ];
-
-  winExeFunctions = lib.concatMapStrings (name: ''
-    function ${name} --description 'Run Windows ${name}.exe'
-      ${name}.exe (__win_args $argv)
-    end
-
-  '') winExeCommands;
+  # https://github.com/drop-stones/wslwrap.fish
+  # /mnt 配下では Windows 版 exe、それ以外では Linux 版バイナリを自動選択する
+  # fish プラグイン。bare なコマンド名(拡張子なし)から .exe を解決してくれる。
+  wslwrapFish = pkgs.fishPlugins.buildFishPlugin {
+    pname = "wslwrap-fish";
+    version = "unstable";
+    src = wslwrap-fish;
+    meta = {
+      description = "Switches between Linux and Windows executables inside WSL2";
+      homepage = "https://github.com/drop-stones/wslwrap.fish";
+      license = lib.licenses.mit;
+    };
+  };
 in
 
 {
+  environment.systemPackages = [ wslwrapFish ];
+
+  # wslwrap-aware `which`。素の which/command -v は fish 関数(register で
+  # 登録したラッパーなど)を解決できないため、wslwrap 側の解決結果を返す
+  # `wslwrap which` に差し替える。
+  programs.fish.shellAliases = {
+    which = "wslwrap which";
+  };
+
   programs.fish.shellInit = ''
     function __win_args --description 'Convert existing WSL file paths in $argv to Windows paths'
       for arg in $argv
@@ -25,28 +37,19 @@ in
       end
     end
 
+    # 1Password CLI。Linux 版は未導入のため常に Windows 版を使う。
+    wslwrap register --mode windows op
+
     # この呼び出しに限り実行ポリシーを Bypass にする(システム全体には影響しない)。
-    function powershell --description 'Run Windows powershell.exe (Windows PowerShell 5.1)'
-      powershell.exe -ExecutionPolicy Bypass (__win_args $argv)
-    end
+    wslwrap register --mode windows powershell -ExecutionPolicy Bypass
+    wslwrap register --mode windows pwsh -ExecutionPolicy Bypass
+    # cmd.exe /c 経由でスクリプトを実行する。
+    wslwrap register --mode windows cmd /c
 
-    function pwsh --description 'Run Windows pwsh.exe (PowerShell 7+)'
-      pwsh.exe -ExecutionPolicy Bypass (__win_args $argv)
-    end
-
-    function cmd --description 'Run a Windows .cmd/.bat script via cmd.exe /c'
-      cmd.exe /c (__win_args $argv)
-    end
-
-    ${winExeFunctions}
-    # /mnt 配下は 9p 経由の Linux git が遅いため git.exe を使う。
-    function git --description 'Use Windows git.exe under /mnt, otherwise the native git'
-      if string match -q '/mnt/*' -- $PWD; and command -sq git.exe
-        git.exe $argv
-      else
-        command git $argv
-      end
-    end
+    # /mnt 配下は 9p 経由の Linux git が遅いため git.exe を使う。それ以外では
+    # Linux 版 git を使う(wslwrap の auto モード)。cwd に応じた切り替えが
+    # 必要なため link ではなく register(auto モード)を使う。
+    wslwrap register git
 
     # code コマンドは WSL 内から呼ぶと常に Remote-WSL 拡張機能経由で開こうとするため、
     # /mnt 配下の Windows 側ファイルを開くときはネイティブの Code.exe を直接起動する。
